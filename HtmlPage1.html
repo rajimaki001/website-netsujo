@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>フォームの画面切り替え</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* 全体のスタイル */
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* フォームと完了画面のコンテナ */
+        #form-page, #thankyou-page {
+            display: none;
+            width: 100%;
+            max-width: 1080px;
+            padding: 40px;
+            box-sizing: border-box;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        /* フォーム画面だけを最初に表示 */
+        #form-page {
+            display: block;
+        }
+
+        /* ヘッダーのスタイル */
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #222;
+            line-height: 1.5;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* フォーム要素のコンテナ */
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            align-items: flex-start;
+        }
+
+        /* フォームの横幅を親要素に合わせる */
+        #contactForm {
+            width: 100%;
+        }
+
+        /* 入力欄とラベル */
+        label {
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        #contactForm input[type="text"],
+        #contactForm input[type="email"],
+        #contactForm textarea {
+            width: 100%; /* フォームの幅いっぱいに広げる */
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+            #contactForm input[type="text"]:focus,
+            #contactForm input[type="email"]:focus,
+            #contactForm textarea:focus {
+                border-color: #ff2200;
+                outline: none;
+            }
+
+        #contactForm textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        /* ボタンのデザイン */
+        #contactForm button {
+            background-color: #ff2200;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            width: 100%; /* フォームの幅いっぱいに広げる */
+            align-self: flex-start;
+        }
+
+            #contactForm button:hover {
+                background-color: #e01f00;
+                box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+            }
+    </style>
+</head>
+<body style="background-color: transparent;">
+
+    <div id="form-page">
+        <h2>以下のフォームにご入力いただくと、製品やサービスに関する詳細資料をダウンロードいただけます。ご入力いただいたメールアドレス宛に、資料のダウンロードURLを送信いたしますのでご確認ください。</h2>
+        <div class="form-container">
+            <form id="contactForm">
+                <label for="name">お名前:</label><br>
+                <input type="text" id="name" name="name" required><br>
+
+                <label for="email">メールアドレス:</label><br>
+                <input type="email" id="email" name="email" required><br>
+
+                <label for="message">資料請求の理由:</label><br>
+                <textarea id="message" name="message"></textarea><br>
+
+                <button type="submit">送信</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="thankyou-page">
+        <h2>この度はお問い合わせいただき、誠にありがとうございます。</h2>
+        <p>以下の内容でお問い合わせを受け付けました。</p>
+    </div>
+
+    <script>document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            // 画面をすぐに切り替える
+            const formPage = document.getElementById('form-page');
+            const thankyouPage = document.getElementById('thankyou-page');
+            formPage.style.display = 'none';
+            thankyouPage.style.display = 'block';
+
+            // GASの公開URLにデータを送信
+            fetch('https://script.google.com/macros/s/AKfycbxTpazptjMlFwOrJKjIjtgCMUoBSorDmF98rdAhTSpq_AopE03WnU9VBn1bVwUCtNLj/exec', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                // 通信成功のログをコンソールに出力
+                console.log('GASからの返信:', data);
+            })
+            .catch(error => {
+                // 通信エラーが発生した場合、完了画面にメッセージを表示
+                console.error('Error:', error);
+                thankyouPage.innerHTML = '<h2>送信に失敗しました。</h2><p>お手数ですが、再度お試しください。</p>';
+            });
+        });</script>
+</body>
+</html>
