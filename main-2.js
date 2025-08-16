@@ -40,7 +40,7 @@ function doPost(e) {
         Logger.log('スプレッドシートへの記録に失敗: ' + error.message);
     }
 
-    const subject = 'お問い合わせありがとうございます';
+    const subject = '【Netsujo株式会社】お問い合わせをありがとうございます';
     const body =
         `${sanitizedName} 様
 
@@ -57,6 +57,8 @@ ${sanitizedMessage}
 ---------------------------
 
 この度は資料をご請求いただき、誠にありがとうございます。
+資料は本メールに添付しております。
+
 お困りごとやご相談ごと等ございましたら、お気軽にご連絡くださいませ。
 お問い合わせフォームはこちらです。
 https://netsujo.jp/contact`;
